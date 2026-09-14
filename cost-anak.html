@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buku Tabungan Anak — Estimasi Biaya</title>
+<style>
+  :root{
+    --navy: #16233B;
+    --navy-deep: #0D1626;
+    --gold: #C6A15B;
+    --paper: #F7F3E6;
+    --paper-line: #E1D8BC;
+    --ink: #23291F;
+    --ink-soft: #5B6259;
+    --stamp: #9C3B34;
+    --group-preg: #9C3B34;
+    --group-dini: #B4863E;
+    --group-sekolah: #35516E;
+    --group-kuliah: #5C4630;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+    --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+  }
+
+  a{ color: inherit; }
+
+  :focus-visible{
+    outline: 2px solid var(--stamp);
+    outline-offset: 3px;
+  }
+
+  /* ---------- Sticky nav ---------- */
+  .tabs{
+    position: sticky;
+    top:0;
+    z-index: 20;
+    display:flex;
+    gap: 2px;
+    background: var(--navy-deep);
+    padding: 0 clamp(16px, 4vw, 48px);
+    overflow-x:auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tabs a{
+    flex: none;
+    text-decoration:none;
+    color: var(--paper);
+    font-size: 0.85rem;
+    padding: 12px 16px 10px;
+    border-bottom: 3px solid transparent;
+    opacity: 0.6;
+    white-space: nowrap;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+  .tabs a:hover{ opacity: 0.9; }
+  .tabs a.active{
+    opacity: 1;
+    border-bottom-color: var(--gold);
+  }
+
+  /* ---------- Cover / hero ---------- */
+  .cover{
+    background:
+      radial-gradient(1200px 500px at 20% -10%, rgba(198,161,91,0.12), transparent 60%),
+      linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: var(--paper);
+    padding: clamp(48px, 8vw, 96px) clamp(16px, 4vw, 48px) clamp(40px, 6vw, 72px);
+  }
+  .cover-inner{
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  .cover-kicker{
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+    margin: 0 0 18px;
+    opacity: 0;
+    animation: rise 0.7s ease forwards 0.05s;
+  }
+  .cover h1{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    line-height: 1.08;
+    margin: 0 0 20px;
+    max-width: 14ch;
+    opacity: 0;
+    animation: rise 0.7s ease forwards 0.15s;
+  }
+  .cover-sub{
+    font-size: 1.05rem;
+    color: #D9D2BE;
+    max-width: 52ch;
+    margin: 0 0 40px;
+    opacity: 0;
+    animation: rise 0.7s ease forwards 0.25s;
+  }
+  @keyframes rise{
+    from{ opacity: 0; transform: translateY(10px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  .cover-fields{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px 32px;
+    border-top: 1px solid rgba(247,243,230,0.18);
+    padding-top: 24px;
+    margin-bottom: 40px;
+  }
+  .cover-field dt{
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: #A8A08A;
+    margin-bottom: 4px;
+  }
+  .cover-field dd{
+    margin:0;
+    font-size: 0.95rem;
+  }
+
+  .balance-box{
+    background: rgba(247,243,230,0.05);
+    border: 1px solid rgba(198,161,91,0.35);
+    border-radius: 4px;
+    padding: 24px clamp(20px, 4vw, 32px);
+    display:flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+  }
+  .balance-label{
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--gold);
+    width: 100%;
+  }
+  .balance-value{
+    font-family: var(--serif);
+    font-size: clamp(1.9rem, 5vw, 2.8rem);
+    font-weight: 500;
+  }
+  .balance-note{
+    color: #B9B29C;
+    font-size: 0.85rem;
+  }
+
+  /* ---------- Ledger page ---------- */
+  .ledger-page{
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 63px,
+      var(--paper-line) 64px
+    );
+    padding: clamp(32px, 6vw, 56px) clamp(16px, 4vw, 48px);
+  }
+  .ledger-inner{ max-width: 980px; margin: 0 auto; }
+
+  .intro{
+    max-width: 62ch;
+    color: var(--ink-soft);
+    margin: 0 0 40px;
+  }
+  .intro strong{ color: var(--ink); }
+
+  .group-banner{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    margin: 56px 0 8px;
+  }
+  .group-banner:first-of-type{ margin-top: 0; }
+  .group-dot{
+    width: 10px; height:10px; border-radius: 50%;
+    flex: none;
+  }
+  .group-banner h2{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .ledger-row{
+    display:grid;
+    grid-template-columns: 56px 1fr 168px 190px;
+    gap: 4px 20px;
+    padding: 20px 16px;
+    border-bottom: 1px solid var(--paper-line);
+    align-items: start;
+  }
+  .ledger-row:first-of-type{ border-top: 1px solid var(--paper-line); }
+
+  .row-index{
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    padding-top: 3px;
+  }
+
+  .row-main h3{
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 3px;
+  }
+  .row-timing{
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  details.row-detail summary{
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--navy);
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  details.row-detail summary::-webkit-details-marker{ display:none; }
+  details.row-detail summary::before{
+    content: '+';
+    display:inline-block;
+    width: 16px; height:16px;
+    border: 1px solid var(--navy);
+    border-radius: 50%;
+    text-align:center;
+    line-height: 14px;
+    font-size: 0.8rem;
+  }
+  details.row-detail[open] summary::before{ content: '–'; }
+  details.row-detail ul{
+    margin: 10px 0 0;
+    padding-left: 18px;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+  details.row-detail li{ margin-bottom: 5px; }
+  details.row-detail li.opsional{ font-style: italic; opacity: 0.85; }
+
+  .row-amount{
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+  .row-cumulative{
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: rgba(22,35,59,0.045);
+    padding: 6px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .row-cumulative small{
+    display:block;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+  }
+
+  /* group accent bar via border-left on the whole row */
+  .ledger-row{ border-left: 3px solid transparent; padding-left: 13px; }
+  .ledger-row[data-group="preg"]{ border-left-color: var(--group-preg); }
+  .ledger-row[data-group="dini"]{ border-left-color: var(--group-dini); }
+  .ledger-row[data-group="sekolah"]{ border-left-color: var(--group-sekolah); }
+  .ledger-row[data-group="kuliah"]{ border-left-color: var(--group-kuliah); }
+
+  /* ---------- Total row ---------- */
+  .total-row{
+    margin-top: 24px;
+    display:grid;
+    grid-template-columns: 56px 1fr 168px 190px;
+    gap: 4px 20px;
+    align-items:center;
+    padding: 22px 16px 22px 13px;
+    background: var(--navy);
+    color: var(--paper);
+    border-radius: 4px;
+  }
+  .total-row h3{
+    font-family: var(--serif);
+    margin:0;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+  .total-row .row-amount{ color: var(--paper); }
+  .total-row .row-cumulative{
+    background: rgba(198,161,91,0.18);
+    color: var(--gold);
+    font-size: 1.05rem;
+  }
+  .total-row .row-cumulative small{ color: #C9C2AC; }
+
+  /* ---------- Aside note ---------- */
+  .note-aside{
+    max-width: 380px;
+    margin: 40px 0 0 auto;
+    background: #FBF3D9;
+    border: 1px solid #E3D49B;
+    padding: 18px 20px;
+    font-size: 0.88rem;
+    color: var(--ink);
+    transform: rotate(-0.6deg);
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.08);
+  }
+  .note-aside strong{ display:block; margin-bottom: 6px; font-family: var(--serif); font-size: 1rem; }
+
+  /* ---------- Back cover ---------- */
+  .back-cover{
+    background: var(--navy-deep);
+    color: #B9B29C;
+    padding: clamp(40px, 6vw, 64px) clamp(16px, 4vw, 48px);
+  }
+  .back-inner{ max-width: 720px; margin: 0 auto; }
+  .back-inner h2{
+    font-family: var(--serif);
+    color: var(--paper);
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 0 0 18px;
+  }
+  .back-inner ul{ padding-left: 20px; margin: 0; }
+  .back-inner li{ margin-bottom: 10px; font-size: 0.92rem; }
+  .back-inner li::marker{ color: var(--gold); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 720px){
+    .ledger-row, .total-row{
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .row-index{ order: -1; }
+    .row-amount, .row-cumulative{
+      text-align: left;
+      display:flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .row-amount::before{ content: 'Setoran tahap ini'; font-family: var(--sans); font-weight:400; font-size:0.75rem; color: var(--ink-soft); }
+    .row-cumulative::before{ content: 'Estimasi kumulatif'; font-family: var(--sans); font-weight:400; font-size:0.7rem; }
+    .total-row .row-amount::before{ content: 'Total setoran akhir'; color: #C9C2AC; }
+    .total-row .row-cumulative::before{ content: ''; }
+    .note-aside{ margin: 32px 0 0; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="tabs" id="tabs">
+  <a href="#g-preg">Kehamilan &amp; Kelahiran</a>
+  <a href="#g-dini">Usia Dini</a>
+  <a href="#g-sekolah">Sekolah</a>
+  <a href="#g-kuliah">Kuliah</a>
+  <a href="#total">Total</a>
+</nav>
+
+<header class="cover">
+  <div class="cover-inner">
+    <p class="cover-kicker">Buku Tabungan Anak · Simulasi</p>
+    <h1>Berapa yang perlu ditabung, dari sebelum hamil sampai wisuda.</h1>
+    <p class="cover-sub">Perjalanan finansial menyiapkan buah hati, dicatat seperti buku tabungan — lengkap dengan rincian tiap tahap dan saldo yang idealnya sudah terkumpul di setiap titik.</p>
+
+    <dl class="cover-fields">
+      <div class="cover-field"><dt>Persalinan</dt><dd>BPJS Kesehatan aktif</dd></div>
+      <div class="cover-field"><dt>TK &amp; SD</dt><dd>Muhammadiyah / Aisyiyah reguler</dd></div>
+      <div class="cover-field"><dt>SMP &amp; SMA</dt><dd>Negeri</dd></div>
+      <div class="cover-field"><dt>Kuliah</dt><dd>PTN, tinggal di rumah</dd></div>
+    </dl>
+
+    <div class="balance-box">
+      <span class="balance-label">Estimasi total kebutuhan</span>
+      <span class="balance-value" id="hero-total">Rp198 – 442 juta</span>
+      <span class="balance-note">di luar kebutuhan opsional</span>
+    </div>
+  </div>
+</header>
+
+<main class="ledger-page">
+  <div class="ledger-inner">
+    <p class="intro">Setiap baris di bawah adalah satu tahap dalam perjalanan itu. Kolom <strong>setoran tahap ini</strong> adalah biaya di tahap tersebut saja; kolom <strong>estimasi kumulatif</strong> adalah total yang idealnya sudah kamu siapkan sejak awal sampai titik itu — semacam saldo berjalan.</p>
+
+    <div id="ledger"></div>
+
+    <aside class="note-aside">
+      <strong>Catatan di pinggir halaman</strong>
+      Angka di atas belum termasuk pos opsional: les/bimbel intensif, daycare penuh waktu, atau kos kuliah di luar kota. Semua itu bisa menambah kira-kira Rp50–150 juta lagi, tergantung pilihan keluarga.
+    </aside>
+  </div>
+</main>
+
+<footer class="back-cover">
+  <div class="back-inner">
+    <h2>Sebelum menutup buku ini</h2>
+    <ul>
+      <li>Ini estimasi kasar dari riset umum, bukan nasihat keuangan formal — bukan pengganti konsultasi dengan perencana keuangan.</li>
+      <li>Rentang biaya lebar karena sangat bergantung pada pilihan cabang sekolah, gaya hidup, dan lokasi tepatnya.</li>
+      <li>BPJS Kesehatan yang aktif memangkas biaya kehamilan dan persalinan secara signifikan — pastikan iurannya selalu lancar.</li>
+      <li>Survei langsung ke sekolah, kampus, dan faskes yang diincar akan memberi angka yang jauh lebih presisi sebelum menetapkan target tabungan.</li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  const stages = [
+    { group:"preg", groupLabel:"Kehamilan & Kelahiran", name:"Sebelum Hamil", timing:"Promil, 3–6 bulan sebelum", lo:0.5, hi:3.5, items:[
+      "Cek kesehatan pranikah/pra-hamil (2 orang) — Rp100rb–300rb",
+      "Asam folat & vitamin kesuburan, 2 orang, 3–6 bulan — Rp300rb–1,5jt",
+      "Pemeriksaan tambahan bila diperlukan — Rp0–2jt"
+    ]},
+    { group:"preg", name:"Masa Kehamilan", timing:"9 bulan", lo:3, hi:13, items:[
+      "Kontrol kandungan rutin di Puskesmas, BPJS aktif — gratis, min. 6× kunjungan + USG dasar",
+      "USG/ANC tambahan di klinik swasta (opsional) — Rp1–4jt",
+      "Vitamin & suplemen kehamilan, 9 bulan — Rp0,9–2,7jt",
+      "Tes lab tambahan bila diminta dokter (TORCH, dll) — Rp0,5–2,5jt",
+      "Baju hamil & perlengkapan pendukung — Rp0,5–2jt",
+      "Kelas edukasi kehamilan/senam hamil — Rp0–1,5jt"
+    ]},
+    { group:"preg", name:"Persalinan", timing:"Hari kelahiran", lo:1.5, hi:6, items:[
+      "Persalinan normal, BPJS aktif — Rp0–1jt",
+      "Perlengkapan bayi baru lahir — Rp1,5–5jt"
+    ]},
+    { group:"preg", name:"Nifas & Pemulihan Ibu", timing:"±40 hari pasca lahir", lo:1.3, hi:7, items:[
+      "Pijat nifas/laktasi — Rp0,5–2jt",
+      "Perawatan tradisional 40 hari (opsional) — Rp0,5–2jt",
+      "Konsultasi laktasi bila diperlukan — Rp0,15–0,5jt",
+      "Pompa ASI, sekali beli — Rp0,15–2jt",
+      "KB pasca melahirkan — Rp0–0,5jt"
+    ]},
+    { group:"dini", groupLabel:"Usia Dini", name:"Bayi", timing:"0–1 tahun", lo:17, hi:39, items:[
+      "Perlengkapan besar: stroller, car seat, box bayi — Rp3–10jt",
+      "Popok, susu formula & makanan bayi, 12 bulan — Rp12–24jt",
+      "Imunisasi tambahan di luar program gratis — Rp2–5jt"
+    ]},
+    { group:"dini", name:"Balita & TK/PAUD", timing:"1–5 tahun · Muhammadiyah/Aisyiyah reguler", lo:33, hi:91, items:[
+      "Uang pangkal TK — Rp2–6jt",
+      "SPP TK, ±24 bulan efektif — Rp5–12jt",
+      "Kebutuhan harian: makan, pakaian, mainan edukatif — Rp24–72jt",
+      "Kesehatan rutin & iuran BPJS — Rp2–5jt",
+      "Belum termasuk daycare penuh waktu — opsional +Rp0–36jt", 
+    ]},
+    { group:"sekolah", groupLabel:"Sekolah", name:"SD", timing:"6 tahun · Muhammadiyah reguler", lo:54, hi:101, items:[
+      "Uang pangkal — Rp5–10jt",
+      "SPP, 6 tahun — Rp21,6–36jt",
+      "Seragam, buku, kegiatan tahunan — Rp6–12jt",
+      "Uang jajan & transportasi, 6 tahun — Rp21,6–43,2jt",
+      "Belum termasuk les tambahan — opsional +Rp0–20jt"
+    ]},
+    { group:"sekolah", name:"SMP", timing:"3 tahun · Negeri", lo:20, hi:40, items:[
+      "SPP — gratis, dana BOS",
+      "Seragam, buku pendamping, iuran komite — Rp6–15jt",
+      "Uang jajan & transportasi, 3 tahun — Rp14,4–25,2jt",
+      "Belum termasuk bimbel tambahan — opsional +Rp0–15jt"
+    ]},
+    { group:"sekolah", name:"SMA", timing:"3 tahun · Negeri", lo:27, hi:47, items:[
+      "SPP — gratis",
+      "Seragam, buku, kegiatan, study tour — Rp9–18jt",
+      "Uang jajan & transportasi, 3 tahun — Rp18–28,8jt",
+      "Bimbel UTBK kelas 12 (opsional) — Rp2–10jt"
+    ]},
+    { group:"kuliah", groupLabel:"Kuliah", name:"Kuliah", timing:"4 tahun · PTN, tinggal di rumah", lo:41, hi:95, items:[
+      "UKT, 8 semester — Rp12–32jt",
+      "Buku, alat kuliah, laptop — Rp5–15jt",
+      "Transportasi & uang saku, 4 tahun — Rp24–48jt",
+      "Tambahan bila kos di luar kota — +Rp10–15jt/tahun"
+    ]}
+  ];
+
+  function fmt(n){
+    const r = Math.round(n * 10) / 10;
+    return (Number.isInteger(r) ? r.toString() : r.toFixed(1).replace('.', ','));
+  }
+  function fmtRange(lo, hi){ return `Rp${fmt(lo)}–${fmt(hi)} jt`; }
+
+  const ledgerEl = document.getElementById('ledger');
+  let cumLo = 0, cumHi = 0;
+  const groupIds = { preg: 'g-preg', dini: 'g-dini', sekolah: 'g-sekolah', kuliah: 'g-kuliah' };
+
+  stages.forEach((s, i) => {
+    if(s.groupLabel){
+      const banner = document.createElement('div');
+      banner.className = 'group-banner';
+      banner.id = groupIds[s.group];
+      banner.innerHTML = `<span class="group-dot" style="background:var(--group-${s.group})"></span><h2>${s.groupLabel}</h2>`;
+      ledgerEl.appendChild(banner);
+    }
+
+    cumLo += s.lo;
+    cumHi += s.hi;
+
+    const row = document.createElement('div');
+    row.className = 'ledger-row';
+    row.dataset.group = s.group;
+
+    const itemsHtml = s.items.map(it => {
+      const opsional = /opsional|tambahan bila|belum termasuk/i.test(it);
+      return `<li${opsional ? ' class="opsional"' : ''}>${it}</li>`;
+    }).join('');
+
+    row.innerHTML = `
+      <div class="row-index">${String(i+1).padStart(2,'0')}</div>
+      <div class="row-main">
+        <h3>${s.name}</h3>
+        <p class="row-timing">${s.timing}</p>
+        <details class="row-detail">
+          <summary>Rincian</summary>
+          <ul>${itemsHtml}</ul>
+        </details>
+      </div>
+      <div class="row-amount">${fmtRange(s.lo, s.hi)}</div>
+      <div class="row-cumulative">${fmtRange(cumLo, cumHi)}<small>estimasi kumulatif</small></div>
+    `;
+    ledgerEl.appendChild(row);
+  });
+
+  const total = document.createElement('div');
+  total.className = 'total-row';
+  total.id = 'total';
+  total.innerHTML = `
+    <div></div>
+    <h3>Saldo akhir yang dibutuhkan</h3>
+    <div class="row-amount">${fmtRange(cumLo, cumHi)}</div>
+    <div class="row-cumulative">${fmtRange(cumLo, cumHi)}<small>sebelum hamil s.d. lulus kuliah</small></div>
+  `;
+  ledgerEl.appendChild(total);
+  document.getElementById('hero-total').textContent = fmtRange(cumLo, cumHi).replace('jt','juta');
+
+  // active tab highlight
+  const tabLinks = [...document.querySelectorAll('#tabs a')];
+  const targets = tabLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if('IntersectionObserver' in window){
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const idx = targets.indexOf(entry.target);
+        if(idx === -1) return;
+        if(entry.isIntersecting){
+          tabLinks.forEach(a => a.classList.remove('active'));
+          tabLinks[idx].classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    targets.forEach(t => obs.observe(t));
+  }
+</script>
+
+</body>
+</html>
