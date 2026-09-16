@@ -601,16 +601,16 @@
     <p class="cover-sub">Perjalanan finansial menyiapkan buah hati, dicatat seperti buku tabungan — dengan satu angka pasti di tiap tahap, dan saldo nyata yang diproyeksikan di setiap titik.</p>
 
     <dl class="cover-fields">
-      <div class="cover-field"><dt>Persalinan</dt><dd>BPJS Kesehatan aktif</dd></div>
-      <div class="cover-field"><dt>TK &amp; SD</dt><dd>Muhammadiyah / Aisyiyah reguler</dd></div>
-      <div class="cover-field"><dt>SMP &amp; SMA</dt><dd>Negeri</dd></div>
-      <div class="cover-field"><dt>Kuliah</dt><dd>PTN, tinggal di rumah</dd></div>
+      <div class="cover-field"><dt>Persalinan</dt><dd>RS swasta kelas 2, non-BPJS</dd></div>
+      <div class="cover-field"><dt>TK</dt><dd>TK swasta umum</dd></div>
+      <div class="cover-field"><dt>SD/SMP/SMA</dt><dd>Swasta menengah / negeri jalur mandiri</dd></div>
+      <div class="cover-field"><dt>Kuliah</dt><dd>S1 di Malang, tinggal di rumah</dd></div>
     </dl>
 
     <div class="balance-box">
       <span class="balance-label">Estimasi total kebutuhan</span>
-      <span class="balance-value" id="hero-total">Rp300 juta</span>
-      <span class="balance-note">di luar kebutuhan opsional</span>
+      <span class="balance-value" id="hero-total">Rp644,2 juta</span>
+      <span class="balance-note">standar biaya hidup kelas menengah, Malang</span>
     </div>
   </div>
 </header>
@@ -710,69 +710,38 @@
 
 <script>
   /* ---------------------------------------------------------------
-     Biaya anak: angka pasti, total tepat Rp300 juta
+     Biaya anak: rincian per fase kehidupan, standar biaya hidup
+     kelas menengah Malang saat ini. Total tepat Rp644,2 juta.
      --------------------------------------------------------------- */
   const stages = [
-    { group:"preg", groupLabel:"Kehamilan & Kelahiran", name:"Sebelum Hamil", timing:"Promil, 4 bulan sebelum", months:4, cost:2, items:[
-      "Cek kesehatan pra-hamil (2 orang) — Rp0,2jt",
-      "Asam folat & vitamin kesuburan, 2 orang × 4 bulan — Rp0,8jt",
-      "Pemeriksaan penunjang awal — Rp1jt"
+    { group:"preg", groupLabel:"Kehamilan & Kelahiran", name:"Kehamilan & Kelahiran", timing:"Usia 0 · kehamilan hingga melahirkan, 9 bulan", months:9, cost:20.6, items:[
+      "Kontrol Medis: 9x cek dokter spesialis kandungan + USG + vitamin standar — Rp3.600.000",
+      "Persalinan: proses melahirkan normal di RS swasta/daerah Malang kelas 2, non-BPJS — Rp12.000.000",
+      "Perlengkapan Awal: baju bayi, kasur, boks bayi, stroller kualitas standar — Rp5.000.000"
     ]},
-    { group:"preg", name:"Masa Kehamilan", timing:"9 bulan", months:9, cost:8, items:[
-      "Kontrol kandungan rutin di Puskesmas, BPJS aktif — Rp0 (gratis, min. 6× kunjungan + USG dasar)",
-      "USG/ANC tambahan di klinik swasta — Rp2jt",
-      "Vitamin & suplemen kehamilan, 9 bulan — Rp1,8jt",
-      "Tes lab tambahan (TORCH, dll) — Rp1,5jt",
-      "Baju hamil & perlengkapan pendukung — Rp1,2jt",
-      "Kelas edukasi kehamilan/senam hamil — Rp1,5jt"
+    { group:"dini", groupLabel:"Usia Dini", name:"Balita & TK", timing:"Usia 1–5 tahun · TK swasta umum, Malang", months:60, cost:98, items:[
+      "Biaya Hidup Bulanan: Rp1,5 juta/bulan × 5 tahun untuk susu formula/MPASI berkualitas, popok, baju berkala, imunisasi tambahan, mainan edukatif — Rp90.000.000",
+      "Pendidikan PAUD/TK: uang pangkal masuk TK swasta umum di Malang + SPP bulanan — Rp8.000.000"
     ]},
-    { group:"preg", name:"Persalinan", timing:"Hari kelahiran", months:1, cost:3.5, items:[
-      "Persalinan normal, BPJS aktif — Rp0,5jt",
-      "Perlengkapan bayi baru lahir — Rp3jt"
+    { group:"sekolah", groupLabel:"Sekolah", name:"SD", timing:"Usia 6–11 tahun · SD swasta nasional Islam/Katolik/Kristen menengah, 6 tahun", months:72, cost:143.2, items:[
+      "Masuk Sekolah: uang gedung, seragam, buku — Rp10.000.000",
+      "SPP & Kegiatan: rata-rata Rp350.000/bulan selama 6 tahun — Rp25.200.000",
+      "Biaya Hidup Anak: uang makan, jajan harian, transportasi sekolah standar Rp1,5 juta/bulan — Rp108.000.000"
     ]},
-    { group:"preg", name:"Nifas & Pemulihan Ibu", timing:"±40 hari pasca lahir", months:1, cost:4, items:[
-      "Pijat nifas/laktasi — Rp1jt",
-      "Perawatan tradisional 40 hari — Rp1,2jt",
-      "Konsultasi laktasi — Rp0,3jt",
-      "Pompa ASI, sekali beli — Rp1,2jt",
-      "KB pasca melahirkan — Rp0,3jt"
+    { group:"sekolah", name:"SMP", timing:"Usia 12–14 tahun · SMP swasta/negeri jalur mandiri ringan, 3 tahun", months:36, cost:90.8, items:[
+      "Masuk Sekolah: uang pangkal SMP swasta/negeri jalur mandiri ringan — Rp8.000.000",
+      "SPP & Kegiatan: rata-rata Rp500.000/bulan — Rp18.000.000",
+      "Biaya Hidup Anak: jajan, paket data, pakaian, kebutuhan sosial anak naik jadi Rp1,8 juta/bulan — Rp64.800.000"
     ]},
-    { group:"dini", groupLabel:"Usia Dini", name:"Bayi", timing:"0–1 tahun", months:12, cost:26, items:[
-      "Perlengkapan besar: stroller, car seat, box bayi — Rp5jt",
-      "Popok, susu & MPASI, 12 bulan — Rp18jt",
-      "Imunisasi tambahan di luar program gratis — Rp3jt"
+    { group:"sekolah", name:"SMA", timing:"Usia 15–17 tahun · SMA swasta favorit menengah atau komite sekolah, 3 tahun", months:36, cost:103.6, items:[
+      "Masuk Sekolah: uang pangkal SMA swasta favorit menengah atau komite sekolah — Rp10.000.000",
+      "SPP & Kebutuhan Belajar: rata-rata Rp600.000/bulan termasuk buku/LKS — Rp21.600.000",
+      "Biaya Hidup Anak: uang saku, pergaulan sehat, transportasi motor/ojek online Rp2 juta/bulan — Rp72.000.000"
     ]},
-    { group:"dini", name:"Balita & TK/PAUD", timing:"1–5 tahun · Muhammadiyah/Aisyiyah reguler", months:48, cost:58, items:[
-      "Uang pangkal TK — Rp4jt",
-      "SPP TK, ±24 bulan efektif — Rp8jt",
-      "Kebutuhan harian: makan, pakaian, mainan edukatif, 4 tahun — Rp43jt",
-      "Kesehatan rutin & iuran BPJS — Rp3jt",
-      "Belum termasuk daycare penuh waktu — opsional +Rp0–36jt"
-    ]},
-    { group:"sekolah", groupLabel:"Sekolah", name:"SD", timing:"6 tahun · Muhammadiyah reguler", months:72, cost:72, items:[
-      "Uang pangkal — Rp7jt",
-      "SPP, 6 tahun (±Rp400rb/bln) — Rp28,8jt",
-      "Seragam, buku, kegiatan tahunan — Rp8jt",
-      "Uang jajan & transportasi, 6 tahun — Rp28,2jt",
-      "Belum termasuk les tambahan — opsional +Rp0–20jt"
-    ]},
-    { group:"sekolah", name:"SMP", timing:"3 tahun · Negeri", months:36, cost:28, items:[
-      "SPP — Rp0 (gratis, dana BOS)",
-      "Seragam, buku pendamping, iuran komite — Rp9jt",
-      "Uang jajan & transportasi, 3 tahun — Rp19jt",
-      "Belum termasuk bimbel tambahan — opsional +Rp0–15jt"
-    ]},
-    { group:"sekolah", name:"SMA", timing:"3 tahun · Negeri", months:36, cost:35, items:[
-      "SPP — Rp0 (gratis)",
-      "Seragam, buku, kegiatan, study tour — Rp12jt",
-      "Uang jajan & transportasi, 3 tahun — Rp18jt",
-      "Bimbel UTBK kelas 12 — Rp5jt"
-    ]},
-    { group:"kuliah", groupLabel:"Kuliah", name:"Kuliah", timing:"4 tahun · PTN, tinggal di rumah", months:48, cost:63.5, items:[
-      "UKT, 8 semester (±Rp2,5jt/semester) — Rp20jt",
-      "Buku, alat kuliah, laptop — Rp10jt",
-      "Transportasi & uang saku, 4 tahun — Rp33,5jt",
-      "Belum termasuk kos di luar kota — opsional +Rp10–15jt/tahun"
+    { group:"kuliah", groupLabel:"Kuliah", name:"Kuliah", timing:"Usia 18–21 tahun · S1 di Malang (UB/UM/UMM), jalur reguler, tinggal di rumah, 4 tahun", months:48, cost:188, items:[
+      "Uang Pangkal / Gedung: rata-rata UKT/uang gedung awal jalur reguler non-mandiri mahal — Rp20.000.000",
+      "Biaya Kuliah (UKT): rata-rata Rp6.000.000/semester × 8 semester — Rp48.000.000",
+      "Uang Saku & Hidup: makan di luar, fotokopi, nongkrong standar mahasiswa, bensin, laptop Rp2,5 juta/bulan — Rp120.000.000"
     ]}
   ];
 
@@ -875,7 +844,7 @@
     const { history, readyIndex, stageSchedule, target } = sim;
     const el = document.getElementById('k-result');
     const readyRow = history[readyIndex];
-    const lahirStage = stageSchedule.find(s => s.name === 'Persalinan');
+    const lahirStage = stageSchedule[0]; // Kehamilan & Kelahiran
     const lastStage = stageSchedule[stageSchedule.length - 1];
     const lastRow = history[lastStage.endM];
 
@@ -896,7 +865,7 @@
       <div class="k-result-value">Dana darurat penuh ${fmtDate(readyRow)} — boleh mulai program hamil</div>
       <dl class="k-milestones">
         <div class="k-milestone"><dt>MULAI COBA HAMIL</dt><dd>${fmtDate(stageSchedule[0].startDate)}</dd></div>
-        <div class="k-milestone"><dt>ANAK LAHIR</dt><dd>${fmtDate(lahirStage.startDate)}</dd></div>
+        <div class="k-milestone"><dt>ANAK LAHIR</dt><dd>${fmtDate(lahirStage.endDate)}</dd></div>
         <div class="k-milestone"><dt>MULAI SD</dt><dd>${fmtDate(stageSchedule.find(s=>s.name==='SD').startDate)}</dd></div>
         <div class="k-milestone"><dt>MULAI KULIAH</dt><dd>${fmtDate(stageSchedule.find(s=>s.name==='Kuliah').startDate)}</dd></div>
         <div class="k-milestone"><dt>PERKIRAAN WISUDA</dt><dd>${fmtDate(lastStage.endDate)}</dd></div>
