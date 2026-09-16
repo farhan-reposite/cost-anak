@@ -18,10 +18,12 @@
     --group-dini: #B4863E;
     --group-sekolah: #35516E;
     --group-kuliah: #5C4630;
+    --group-kesiapan: #4B7A62;
     --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
     --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
+  :root:not([data-theme="light"]){ color-scheme: light; }
 
   *{ box-sizing: border-box; }
 
@@ -204,7 +206,7 @@
 
   .ledger-row{
     display:grid;
-    grid-template-columns: 56px 1fr 168px 190px;
+    grid-template-columns: 56px 1fr 150px 230px;
     gap: 4px 20px;
     padding: 20px 16px;
     border-bottom: 1px solid var(--paper-line);
@@ -284,8 +286,18 @@
     font-size: 0.68rem;
     color: var(--ink-soft);
   }
+  .row-projected{
+    margin-top: 6px !important;
+    font-family: var(--mono) !important;
+    font-weight: 600 !important;
+    font-size: 0.72rem !important;
+    white-space: normal !important;
+    line-height: 1.35;
+  }
+  .row-projected.ok{ color: var(--group-kesiapan); }
+  .row-projected.warn{ color: var(--gold); }
+  .row-projected.bad{ color: var(--stamp); }
 
-  /* group accent bar via border-left on the whole row */
   .ledger-row{ border-left: 3px solid transparent; padding-left: 13px; }
   .ledger-row[data-group="preg"]{ border-left-color: var(--group-preg); }
   .ledger-row[data-group="dini"]{ border-left-color: var(--group-dini); }
@@ -296,7 +308,7 @@
   .total-row{
     margin-top: 24px;
     display:grid;
-    grid-template-columns: 56px 1fr 168px 190px;
+    grid-template-columns: 56px 1fr 150px 230px;
     gap: 4px 20px;
     align-items:center;
     padding: 22px 16px 22px 13px;
@@ -317,6 +329,203 @@
     font-size: 1.05rem;
   }
   .total-row .row-cumulative small{ color: #C9C2AC; }
+  .total-row .row-projected{ color: var(--paper) !important; opacity: 0.85; }
+
+  /* ---------- Kesiapan Finansial ---------- */
+  .kesiapan-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px 24px;
+    margin: 28px 0 32px;
+  }
+  .kfield{
+    display:flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  .kfield > span{
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+  }
+  .kfield-input{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    background: #FFFEFB;
+    border: 1px solid var(--paper-line);
+    border-radius: 3px;
+    padding: 9px 10px;
+  }
+  .kfield-input:focus-within{ border-color: var(--group-kesiapan); }
+  .kfield-input input,
+  .kfield-input select{
+    border:none;
+    outline:none;
+    background:transparent;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--ink);
+    width: 100%;
+    min-width: 0;
+  }
+  .kfield-input input[type="month"],
+  .kfield-input select{ font-family: var(--sans); }
+  .kprefix, .ksuffix{ font-size: 0.78rem; color: var(--ink-soft); white-space: nowrap; }
+
+  .kesiapan-result{
+    background: var(--navy);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 24px clamp(20px, 4vw, 32px);
+    margin-bottom: 28px;
+  }
+  .k-result-label{
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .k-result-value{
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    margin-bottom: 10px;
+  }
+  .k-milestones{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px 20px;
+    border-top: 1px solid rgba(247,243,230,0.18);
+    border-bottom: 1px solid rgba(247,243,230,0.18);
+    padding: 16px 0;
+    margin: 4px 0 14px;
+  }
+  .k-milestone dt{
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: #A8A08A;
+    margin-bottom: 4px;
+  }
+  .k-milestone dd{
+    margin:0;
+    font-size: 0.95rem;
+    font-family: var(--serif);
+  }
+  .k-result-note{
+    font-size: 0.85rem;
+    color: #C9C2AC;
+    margin: 0;
+  }
+  .k-result-note.caution{ color: #E7C9A8; }
+
+  /* ---------- Chart + hover tooltip ---------- */
+  .kesiapan-chart-wrap{
+    position: relative;
+    background: #FFFEFB;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    padding: 14px 10px 6px;
+    margin-bottom: 10px;
+    cursor: crosshair;
+  }
+  .kesiapan-chart-wrap svg{ width: 100%; height: auto; display:block; }
+
+  .k-tip{
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+    background: var(--navy);
+    color: var(--paper);
+    border: 1px solid rgba(198,161,91,0.45);
+    border-radius: 4px;
+    padding: 9px 12px;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    min-width: 172px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+    transform: translate(-50%, -100%);
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+  .k-tip.show{ opacity: 1; }
+  .k-tip-date{
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .k-tip-bal{
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    margin-bottom: 6px;
+    display:block;
+  }
+  .k-tip-bal.bad{ color: #E9A9A3; }
+  .k-tip-row{
+    display:flex;
+    justify-content: space-between;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: #C9C2AC;
+  }
+  .k-tip-row span:last-child{ color: var(--paper); }
+  .k-tip-stage{
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(247,243,230,0.18);
+    font-size: 0.72rem;
+    color: #C9C2AC;
+  }
+  .k-hint{
+    font-size: 0.74rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: 0 0 14px;
+  }
+
+  .k-legend{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 0 0 10px;
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+  }
+  .k-legend-item{ display:inline-flex; align-items:center; gap:6px; }
+  .k-legend-item .group-dot{ width:8px; height:8px; }
+
+  .k-monthly-detail{ margin-bottom: 24px; }
+  .k-table-wrap{ overflow-x:auto; margin-top: 14px; }
+  .k-table{ width:100%; border-collapse: collapse; font-size: 0.85rem; }
+  .k-table th{
+    text-align:left;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--paper-line);
+    padding: 7px 10px;
+    white-space: nowrap;
+  }
+  .k-table td{
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--paper-line);
+    font-family: var(--mono);
+    white-space: nowrap;
+  }
+  .k-table td.k-status-ok{ color: var(--group-kesiapan); font-weight:600; }
+  .k-table td.k-status-warn{ color: var(--gold); font-weight:600; }
+  .k-table td.k-status-bad{ color: var(--stamp); font-weight:600; }
+
+  .k-assumptions{
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    max-width: 68ch;
+    margin: 0 0 8px;
+  }
 
   /* ---------- Aside note ---------- */
   .note-aside{
@@ -360,20 +569,24 @@
     .row-amount, .row-cumulative{
       text-align: left;
       display:flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: baseline;
     }
-    .row-amount::before{ content: 'Setoran tahap ini'; font-family: var(--sans); font-weight:400; font-size:0.75rem; color: var(--ink-soft); }
-    .row-cumulative::before{ content: 'Estimasi kumulatif'; font-family: var(--sans); font-weight:400; font-size:0.7rem; }
-    .total-row .row-amount::before{ content: 'Total setoran akhir'; color: #C9C2AC; }
+    .row-amount::before{ content: 'Biaya tahap ini'; font-family: var(--sans); font-weight:400; font-size:0.75rem; color: var(--ink-soft); }
+    .row-cumulative::before{ content: 'Biaya kumulatif'; font-family: var(--sans); font-weight:400; font-size:0.7rem; width:100%; }
+    .row-projected{ width:100%; }
+    .total-row .row-amount::before{ content: 'Total biaya anak'; color: #C9C2AC; }
     .total-row .row-cumulative::before{ content: ''; }
     .note-aside{ margin: 32px 0 0; transform: none; }
+    .k-tip{ min-width: 150px; font-size: 0.72rem; }
   }
 </style>
 </head>
 <body>
 
 <nav class="tabs" id="tabs">
+  <a href="#kesiapan">Kesiapan</a>
   <a href="#g-preg">Kehamilan &amp; Kelahiran</a>
   <a href="#g-dini">Usia Dini</a>
   <a href="#g-sekolah">Sekolah</a>
@@ -385,7 +598,7 @@
   <div class="cover-inner">
     <p class="cover-kicker">Buku Tabungan Anak · Simulasi</p>
     <h1>Berapa yang perlu ditabung, dari sebelum hamil sampai wisuda.</h1>
-    <p class="cover-sub">Perjalanan finansial menyiapkan buah hati, dicatat seperti buku tabungan — lengkap dengan rincian tiap tahap dan saldo yang idealnya sudah terkumpul di setiap titik.</p>
+    <p class="cover-sub">Perjalanan finansial menyiapkan buah hati, dicatat seperti buku tabungan — dengan satu angka pasti di tiap tahap, dan saldo nyata yang diproyeksikan di setiap titik.</p>
 
     <dl class="cover-fields">
       <div class="cover-field"><dt>Persalinan</dt><dd>BPJS Kesehatan aktif</dd></div>
@@ -396,21 +609,103 @@
 
     <div class="balance-box">
       <span class="balance-label">Estimasi total kebutuhan</span>
-      <span class="balance-value" id="hero-total">Rp198 – 442 juta</span>
+      <span class="balance-value" id="hero-total">Rp300 juta</span>
       <span class="balance-note">di luar kebutuhan opsional</span>
     </div>
   </div>
 </header>
 
+<section class="ledger-page" id="kesiapan">
+  <div class="ledger-inner">
+    <div class="group-banner" style="margin-top:0;">
+      <span class="group-dot" style="background:var(--group-kesiapan)"></span>
+      <h2>Kesiapan Finansial &amp; Linimasa</h2>
+    </div>
+    <p class="intro">Ini bukan cuma soal kapan dana darurat penuh — ini seluruh perjalanannya: dari sekarang, ke masa coba hamil, kelahiran, sampai anak lulus kuliah, dengan gaji, kenaikan tahunan, bonus, <strong>sewa rumah yang dibayar sekaligus tiap tahun</strong>, dan <strong>seluruh biaya anak Rp300 juta</strong> ikut dipotong dari saldo. Ubah angkanya kapan saja — hasil, grafik, tabel, sampai baris-baris buku tabungan di bawah ikut menyesuaikan.</p>
+
+    <div class="kesiapan-grid">
+      <label class="kfield">
+        <span>GAJI BULANAN SAAT INI</span>
+        <div class="kfield-input"><span class="kprefix">Rp</span><input type="number" id="k-salary" value="6.4" step="0.1" min="0"><span class="ksuffix">juta</span></div>
+      </label>
+      <label class="kfield">
+        <span>PENGELUARAN BERDUA / BULAN</span>
+        <div class="kfield-input"><span class="kprefix">Rp</span><input type="number" id="k-expense" value="4" step="0.1" min="0"><span class="ksuffix">juta</span></div>
+      </label>
+      <label class="kfield">
+        <span>KENAIKAN GAJI / TAHUN</span>
+        <div class="kfield-input"><input type="number" id="k-raise" value="10" step="1" min="0"><span class="ksuffix">%</span></div>
+      </label>
+      <label class="kfield">
+        <span>JUMLAH BONUS / TAHUN</span>
+        <div class="kfield-input"><input type="number" id="k-bonus-count" value="2" step="1" min="0"><span class="ksuffix">kali</span></div>
+      </label>
+      <label class="kfield">
+        <span>BESAR TIAP BONUS</span>
+        <div class="kfield-input"><input type="number" id="k-bonus-mult" value="1" step="0.1" min="0"><span class="ksuffix">x gaji bulan itu</span></div>
+      </label>
+      <label class="kfield">
+        <span>SEWA RUMAH / TAHUN</span>
+        <div class="kfield-input"><span class="kprefix">Rp</span><input type="number" id="k-rent" value="17" step="0.5" min="0"><span class="ksuffix">juta</span></div>
+      </label>
+      <label class="kfield">
+        <span>SEWA DIBAYAR TIAP BULAN</span>
+        <div class="kfield-input">
+          <select id="k-rent-month">
+            <option value="1">Januari</option>
+            <option value="2">Februari</option>
+            <option value="3">Maret</option>
+            <option value="4">April</option>
+            <option value="5">Mei</option>
+            <option value="6">Juni</option>
+            <option value="7">Juli</option>
+            <option value="8">Agustus</option>
+            <option value="9" selected>September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Desember</option>
+          </select>
+        </div>
+      </label>
+      <label class="kfield">
+        <span>TARGET DANA DARURAT</span>
+        <div class="kfield-input"><span class="kprefix">Rp</span><input type="number" id="k-target" value="32" step="1" min="0"><span class="ksuffix">juta</span></div>
+      </label>
+      <label class="kfield">
+        <span>MULAI MENABUNG DARI</span>
+        <div class="kfield-input"><input type="month" id="k-start" value="2026-09"></div>
+      </label>
+    </div>
+
+    <div class="kesiapan-result" id="k-result"></div>
+
+    <div class="kesiapan-chart-wrap" id="k-chart-wrap">
+      <svg id="k-chart" viewBox="0 0 900 340" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Grafik saldo proyeksi dari sekarang sampai anak lulus kuliah"></svg>
+      <div class="k-tip" id="k-tip" aria-hidden="true"></div>
+    </div>
+    <p class="k-hint">Arahkan kursor (atau geser jari) di atas grafik untuk melihat saldo, gaji, bonus, sewa, dan biaya anak di bulan tersebut.</p>
+    <div class="k-legend" id="k-legend"></div>
+
+    <details class="row-detail k-monthly-detail">
+      <summary>Jadwal tiap tahap</summary>
+      <div class="k-table-wrap">
+        <table class="k-table" id="k-table"></table>
+      </div>
+    </details>
+
+    <p class="k-assumptions">Asumsi: pengeluaran bulanan dan sewa dianggap tetap (tidak naik tiap tahun); kenaikan gaji 10%/tahun disederhanakan berlaku terus-menerus meski di dunia nyata biasanya melandai — jadi proyeksi di tahap SMA/Kuliah adalah yang paling tidak pasti. Sewa rumah dipotong <strong>sekaligus satu kali setahun</strong> pada bulan yang kalian pilih, jadi grafiknya akan terlihat menurun tajam tiap tahun di bulan itu. Biaya tiap tahap anak memakai angka pasti (total Rp300 juta) dan disebar rata per bulan selama tahap itu berlangsung, lalu dipotong dari saldo berjalan.</p>
+  </div>
+</section>
+
 <main class="ledger-page">
   <div class="ledger-inner">
-    <p class="intro">Setiap baris di bawah adalah satu tahap dalam perjalanan itu. Kolom <strong>setoran tahap ini</strong> adalah biaya di tahap tersebut saja; kolom <strong>estimasi kumulatif</strong> adalah total yang idealnya sudah kamu siapkan sejak awal sampai titik itu — semacam saldo berjalan.</p>
+    <p class="intro">Setiap baris di bawah adalah satu tahap dalam perjalanan itu, lengkap dengan perkiraan tanggalnya berdasarkan simulasi di atas. Kolom <strong>biaya tahap ini</strong> adalah biaya di tahap tersebut saja; <strong>biaya kumulatif</strong> adalah total biaya sejak awal sampai titik itu; dan <strong>proyeksi saldo</strong> adalah perkiraan saldo nyata kalian di akhir tahap itu, setelah gaji, bonus, sewa, dan biaya anak diperhitungkan bersamaan.</p>
 
     <div id="ledger"></div>
 
     <aside class="note-aside">
       <strong>Catatan di pinggir halaman</strong>
-      Angka di atas belum termasuk pos opsional: les/bimbel intensif, daycare penuh waktu, atau kos kuliah di luar kota. Semua itu bisa menambah kira-kira Rp50–150 juta lagi, tergantung pilihan keluarga.
+      Angka Rp300 juta di atas belum termasuk pos opsional: les/bimbel intensif, daycare penuh waktu, atau kos kuliah di luar kota. Semua itu bisa menambah kira-kira Rp50–150 juta lagi, tergantung pilihan keluarga.
     </aside>
   </div>
 </main>
@@ -419,154 +714,494 @@
   <div class="back-inner">
     <h2>Sebelum menutup buku ini</h2>
     <ul>
-      <li>Ini estimasi kasar dari riset umum, bukan nasihat keuangan formal — bukan pengganti konsultasi dengan perencana keuangan.</li>
-      <li>Rentang biaya lebar karena sangat bergantung pada pilihan cabang sekolah, gaya hidup, dan lokasi tepatnya.</li>
+      <li>Ini estimasi kasar dari riset umum dan simulasi sederhana, bukan nasihat keuangan formal — bukan pengganti konsultasi dengan perencana keuangan.</li>
+      <li>Angka Rp300 juta adalah satu skenario terpilih di tengah-tengah: sekolah swasta reguler untuk TK/SD, negeri untuk SMP/SMA, dan PTN sambil tinggal di rumah. Pilihan yang berbeda bisa menggeser totalnya jauh.</li>
       <li>BPJS Kesehatan yang aktif memangkas biaya kehamilan dan persalinan secara signifikan — pastikan iurannya selalu lancar.</li>
+      <li>Proyeksi kenaikan gaji 10%/tahun selama puluhan tahun jarang bertahan di dunia nyata — anggap linimasa ini arah kasar, bukan kepastian, dan tinjau ulang setiap tahun.</li>
       <li>Survei langsung ke sekolah, kampus, dan faskes yang diincar akan memberi angka yang jauh lebih presisi sebelum menetapkan target tabungan.</li>
     </ul>
   </div>
 </footer>
 
 <script>
+  /* ---------------------------------------------------------------
+     Biaya anak: angka pasti, total tepat Rp300 juta
+     --------------------------------------------------------------- */
   const stages = [
-    { group:"preg", groupLabel:"Kehamilan & Kelahiran", name:"Sebelum Hamil", timing:"Promil, 3–6 bulan sebelum", lo:0.5, hi:3.5, items:[
-      "Cek kesehatan pranikah/pra-hamil (2 orang) — Rp100rb–300rb",
-      "Asam folat & vitamin kesuburan, 2 orang, 3–6 bulan — Rp300rb–1,5jt",
-      "Pemeriksaan tambahan bila diperlukan — Rp0–2jt"
+    { group:"preg", groupLabel:"Kehamilan & Kelahiran", name:"Sebelum Hamil", timing:"Promil, 4 bulan sebelum", months:4, cost:2, items:[
+      "Cek kesehatan pra-hamil (2 orang) — Rp0,2jt",
+      "Asam folat & vitamin kesuburan, 2 orang × 4 bulan — Rp0,8jt",
+      "Pemeriksaan penunjang awal — Rp1jt"
     ]},
-    { group:"preg", name:"Masa Kehamilan", timing:"9 bulan", lo:3, hi:13, items:[
-      "Kontrol kandungan rutin di Puskesmas, BPJS aktif — gratis, min. 6× kunjungan + USG dasar",
-      "USG/ANC tambahan di klinik swasta (opsional) — Rp1–4jt",
-      "Vitamin & suplemen kehamilan, 9 bulan — Rp0,9–2,7jt",
-      "Tes lab tambahan bila diminta dokter (TORCH, dll) — Rp0,5–2,5jt",
-      "Baju hamil & perlengkapan pendukung — Rp0,5–2jt",
-      "Kelas edukasi kehamilan/senam hamil — Rp0–1,5jt"
+    { group:"preg", name:"Masa Kehamilan", timing:"9 bulan", months:9, cost:8, items:[
+      "Kontrol kandungan rutin di Puskesmas, BPJS aktif — Rp0 (gratis, min. 6× kunjungan + USG dasar)",
+      "USG/ANC tambahan di klinik swasta — Rp2jt",
+      "Vitamin & suplemen kehamilan, 9 bulan — Rp1,8jt",
+      "Tes lab tambahan (TORCH, dll) — Rp1,5jt",
+      "Baju hamil & perlengkapan pendukung — Rp1,2jt",
+      "Kelas edukasi kehamilan/senam hamil — Rp1,5jt"
     ]},
-    { group:"preg", name:"Persalinan", timing:"Hari kelahiran", lo:1.5, hi:6, items:[
-      "Persalinan normal, BPJS aktif — Rp0–1jt",
-      "Perlengkapan bayi baru lahir — Rp1,5–5jt"
+    { group:"preg", name:"Persalinan", timing:"Hari kelahiran", months:1, cost:3.5, items:[
+      "Persalinan normal, BPJS aktif — Rp0,5jt",
+      "Perlengkapan bayi baru lahir — Rp3jt"
     ]},
-    { group:"preg", name:"Nifas & Pemulihan Ibu", timing:"±40 hari pasca lahir", lo:1.3, hi:7, items:[
-      "Pijat nifas/laktasi — Rp0,5–2jt",
-      "Perawatan tradisional 40 hari (opsional) — Rp0,5–2jt",
-      "Konsultasi laktasi bila diperlukan — Rp0,15–0,5jt",
-      "Pompa ASI, sekali beli — Rp0,15–2jt",
-      "KB pasca melahirkan — Rp0–0,5jt"
+    { group:"preg", name:"Nifas & Pemulihan Ibu", timing:"±40 hari pasca lahir", months:1, cost:4, items:[
+      "Pijat nifas/laktasi — Rp1jt",
+      "Perawatan tradisional 40 hari — Rp1,2jt",
+      "Konsultasi laktasi — Rp0,3jt",
+      "Pompa ASI, sekali beli — Rp1,2jt",
+      "KB pasca melahirkan — Rp0,3jt"
     ]},
-    { group:"dini", groupLabel:"Usia Dini", name:"Bayi", timing:"0–1 tahun", lo:17, hi:39, items:[
-      "Perlengkapan besar: stroller, car seat, box bayi — Rp3–10jt",
-      "Popok, susu formula & makanan bayi, 12 bulan — Rp12–24jt",
-      "Imunisasi tambahan di luar program gratis — Rp2–5jt"
+    { group:"dini", groupLabel:"Usia Dini", name:"Bayi", timing:"0–1 tahun", months:12, cost:26, items:[
+      "Perlengkapan besar: stroller, car seat, box bayi — Rp5jt",
+      "Popok, susu & MPASI, 12 bulan — Rp18jt",
+      "Imunisasi tambahan di luar program gratis — Rp3jt"
     ]},
-    { group:"dini", name:"Balita & TK/PAUD", timing:"1–5 tahun · Muhammadiyah/Aisyiyah reguler", lo:33, hi:91, items:[
-      "Uang pangkal TK — Rp2–6jt",
-      "SPP TK, ±24 bulan efektif — Rp5–12jt",
-      "Kebutuhan harian: makan, pakaian, mainan edukatif — Rp24–72jt",
-      "Kesehatan rutin & iuran BPJS — Rp2–5jt",
-      "Belum termasuk daycare penuh waktu — opsional +Rp0–36jt", 
+    { group:"dini", name:"Balita & TK/PAUD", timing:"1–5 tahun · Muhammadiyah/Aisyiyah reguler", months:48, cost:58, items:[
+      "Uang pangkal TK — Rp4jt",
+      "SPP TK, ±24 bulan efektif — Rp8jt",
+      "Kebutuhan harian: makan, pakaian, mainan edukatif, 4 tahun — Rp43jt",
+      "Kesehatan rutin & iuran BPJS — Rp3jt",
+      "Belum termasuk daycare penuh waktu — opsional +Rp0–36jt"
     ]},
-    { group:"sekolah", groupLabel:"Sekolah", name:"SD", timing:"6 tahun · Muhammadiyah reguler", lo:54, hi:101, items:[
-      "Uang pangkal — Rp5–10jt",
-      "SPP, 6 tahun — Rp21,6–36jt",
-      "Seragam, buku, kegiatan tahunan — Rp6–12jt",
-      "Uang jajan & transportasi, 6 tahun — Rp21,6–43,2jt",
+    { group:"sekolah", groupLabel:"Sekolah", name:"SD", timing:"6 tahun · Muhammadiyah reguler", months:72, cost:72, items:[
+      "Uang pangkal — Rp7jt",
+      "SPP, 6 tahun (±Rp400rb/bln) — Rp28,8jt",
+      "Seragam, buku, kegiatan tahunan — Rp8jt",
+      "Uang jajan & transportasi, 6 tahun — Rp28,2jt",
       "Belum termasuk les tambahan — opsional +Rp0–20jt"
     ]},
-    { group:"sekolah", name:"SMP", timing:"3 tahun · Negeri", lo:20, hi:40, items:[
-      "SPP — gratis, dana BOS",
-      "Seragam, buku pendamping, iuran komite — Rp6–15jt",
-      "Uang jajan & transportasi, 3 tahun — Rp14,4–25,2jt",
+    { group:"sekolah", name:"SMP", timing:"3 tahun · Negeri", months:36, cost:28, items:[
+      "SPP — Rp0 (gratis, dana BOS)",
+      "Seragam, buku pendamping, iuran komite — Rp9jt",
+      "Uang jajan & transportasi, 3 tahun — Rp19jt",
       "Belum termasuk bimbel tambahan — opsional +Rp0–15jt"
     ]},
-    { group:"sekolah", name:"SMA", timing:"3 tahun · Negeri", lo:27, hi:47, items:[
-      "SPP — gratis",
-      "Seragam, buku, kegiatan, study tour — Rp9–18jt",
-      "Uang jajan & transportasi, 3 tahun — Rp18–28,8jt",
-      "Bimbel UTBK kelas 12 (opsional) — Rp2–10jt"
+    { group:"sekolah", name:"SMA", timing:"3 tahun · Negeri", months:36, cost:35, items:[
+      "SPP — Rp0 (gratis)",
+      "Seragam, buku, kegiatan, study tour — Rp12jt",
+      "Uang jajan & transportasi, 3 tahun — Rp18jt",
+      "Bimbel UTBK kelas 12 — Rp5jt"
     ]},
-    { group:"kuliah", groupLabel:"Kuliah", name:"Kuliah", timing:"4 tahun · PTN, tinggal di rumah", lo:41, hi:95, items:[
-      "UKT, 8 semester — Rp12–32jt",
-      "Buku, alat kuliah, laptop — Rp5–15jt",
-      "Transportasi & uang saku, 4 tahun — Rp24–48jt",
-      "Tambahan bila kos di luar kota — +Rp10–15jt/tahun"
+    { group:"kuliah", groupLabel:"Kuliah", name:"Kuliah", timing:"4 tahun · PTN, tinggal di rumah", months:48, cost:63.5, items:[
+      "UKT, 8 semester (±Rp2,5jt/semester) — Rp20jt",
+      "Buku, alat kuliah, laptop — Rp10jt",
+      "Transportasi & uang saku, 4 tahun — Rp33,5jt",
+      "Belum termasuk kos di luar kota — opsional +Rp10–15jt/tahun"
     ]}
   ];
 
   function fmt(n){
     const r = Math.round(n * 10) / 10;
-    return (Number.isInteger(r) ? r.toString() : r.toFixed(1).replace('.', ','));
+    return (Number.isInteger(r) ? r.toString() : r.toFixed(1)).replace('.', ',');
   }
-  function fmtRange(lo, hi){ return `Rp${fmt(lo)}–${fmt(hi)} jt`; }
+  function rp(n){ return `Rp${fmt(n)} jt`; }
 
-  const ledgerEl = document.getElementById('ledger');
-  let cumLo = 0, cumHi = 0;
+  const monthNamesID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
   const groupIds = { preg: 'g-preg', dini: 'g-dini', sekolah: 'g-sekolah', kuliah: 'g-kuliah' };
 
-  stages.forEach((s, i) => {
-    if(s.groupLabel){
-      const banner = document.createElement('div');
-      banner.className = 'group-banner';
-      banner.id = groupIds[s.group];
-      banner.innerHTML = `<span class="group-dot" style="background:var(--group-${s.group})"></span><h2>${s.groupLabel}</h2>`;
-      ledgerEl.appendChild(banner);
+  const TOTAL_COST = stages.reduce((a, s) => a + s.cost, 0);
+  document.getElementById('hero-total').textContent = `Rp${fmt(TOTAL_COST)} juta`;
+
+  /* ---------------- inputs ---------------- */
+  const kFieldIds = ['k-salary','k-expense','k-raise','k-bonus-count','k-bonus-mult','k-rent','k-rent-month','k-target','k-start'];
+
+  function getKInputs(){
+    return {
+      salary: parseFloat(document.getElementById('k-salary').value) || 0,
+      expense: parseFloat(document.getElementById('k-expense').value) || 0,
+      raise: parseFloat(document.getElementById('k-raise').value) || 0,
+      bonusCount: Math.max(0, Math.round(parseFloat(document.getElementById('k-bonus-count').value) || 0)),
+      bonusMult: parseFloat(document.getElementById('k-bonus-mult').value) || 0,
+      rent: parseFloat(document.getElementById('k-rent').value) || 0,
+      rentMonth: parseInt(document.getElementById('k-rent-month').value, 10) || 1,
+      target: parseFloat(document.getElementById('k-target').value) || 0,
+      start: document.getElementById('k-start').value || '2026-09'
+    };
+  }
+
+  function dateFromIndex(sy, sm, m){
+    const dateM = (sm - 1) + m;
+    return { year: sy + Math.floor(dateM / 12), month: (dateM % 12) + 1 };
+  }
+  function fmtDate(d){ return `${monthNamesID[d.month - 1]} ${d.year}`; }
+
+  function simulateRoadmap(p){
+    const parts = p.start.split('-').map(Number);
+    const sy = parts[0] || 2026, sm = parts[1] || 1;
+
+    const bonusMonths = new Set();
+    for(let i = 1; i <= p.bonusCount; i++){
+      bonusMonths.add(Math.round(i * 12 / p.bonusCount));
     }
 
-    cumLo += s.lo;
-    cumHi += s.hi;
+    const salaryAt = m => p.salary * Math.pow(1 + p.raise / 100, Math.floor(m / 12));
+    const bonusAt = m => bonusMonths.has((m % 12) + 1) ? salaryAt(m) * p.bonusMult : 0;
+    // rent is a single lump sum charged on the chosen calendar month, every year
+    const rentAt = m => (dateFromIndex(sy, sm, m).month === p.rentMonth ? p.rent : 0);
 
-    const row = document.createElement('div');
-    row.className = 'ledger-row';
-    row.dataset.group = s.group;
+    // Pass 1 — pure saving phase: month the emergency fund target is first reached
+    let cum = 0, readyIndex = -1;
+    for(let m = 0; m < 600; m++){
+      cum += salaryAt(m) + bonusAt(m) - p.expense - rentAt(m);
+      if(p.target > 0 && cum >= p.target){ readyIndex = m; break; }
+    }
+    if(readyIndex === -1) readyIndex = 0;
 
-    const itemsHtml = s.items.map(it => {
-      const opsional = /opsional|tambahan bila|belum termasuk/i.test(it);
-      return `<li${opsional ? ' class="opsional"' : ''}>${it}</li>`;
-    }).join('');
+    // Stage schedule, chained from readyIndex
+    let cursor = readyIndex;
+    const stageSchedule = stages.map(s => {
+      const dur = Math.max(1, Math.round(s.months));
+      const startM = cursor, endM = cursor + dur - 1;
+      cursor += dur;
+      return { ...s, dur, startM, endM, startDate: dateFromIndex(sy, sm, startM), endDate: dateFromIndex(sy, sm, endM) };
+    });
+    const horizon = cursor + 2;
 
-    row.innerHTML = `
-      <div class="row-index">${String(i+1).padStart(2,'0')}</div>
-      <div class="row-main">
-        <h3>${s.name}</h3>
-        <p class="row-timing">${s.timing}</p>
-        <details class="row-detail">
-          <summary>Rincian</summary>
-          <ul>${itemsHtml}</ul>
-        </details>
-      </div>
-      <div class="row-amount">${fmtRange(s.lo, s.hi)}</div>
-      <div class="row-cumulative">${fmtRange(cumLo, cumHi)}<small>estimasi kumulatif</small></div>
-    `;
-    ledgerEl.appendChild(row);
-  });
+    // Pass 2 — full simulation, child costs included
+    let cumulative = 0, spentOnChild = 0;
+    const history = [];
+    for(let m = 0; m < horizon; m++){
+      const salary = salaryAt(m);
+      const bonus = bonusAt(m);
+      const rent = rentAt(m);
+      let stageCost = 0, activeStage = null;
+      for(const st of stageSchedule){
+        if(m >= st.startM && m <= st.endM){ stageCost = st.cost / st.dur; activeStage = st; break; }
+      }
+      spentOnChild += stageCost;
+      const net = salary + bonus - p.expense - rent - stageCost;
+      cumulative += net;
+      const d = dateFromIndex(sy, sm, m);
+      history.push({ m, year: d.year, month: d.month, salary, bonus, rent, stageCost, activeStage, net, cumulative, spentOnChild });
+    }
 
-  const total = document.createElement('div');
-  total.className = 'total-row';
-  total.id = 'total';
-  total.innerHTML = `
-    <div></div>
-    <h3>Saldo akhir yang dibutuhkan</h3>
-    <div class="row-amount">${fmtRange(cumLo, cumHi)}</div>
-    <div class="row-cumulative">${fmtRange(cumLo, cumHi)}<small>sebelum hamil s.d. lulus kuliah</small></div>
-  `;
-  ledgerEl.appendChild(total);
-  document.getElementById('hero-total').textContent = fmtRange(cumLo, cumHi).replace('jt','juta');
-
-  // active tab highlight
-  const tabLinks = [...document.querySelectorAll('#tabs a')];
-  const targets = tabLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
-  if('IntersectionObserver' in window){
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const idx = targets.indexOf(entry.target);
-        if(idx === -1) return;
-        if(entry.isIntersecting){
-          tabLinks.forEach(a => a.classList.remove('active'));
-          tabLinks[idx].classList.add('active');
-        }
-      });
-    }, { rootMargin: '-30% 0px -60% 0px' });
-    targets.forEach(t => obs.observe(t));
+    return { sy, sm, readyIndex, stageSchedule, history, target: p.target, rentMonth: p.rentMonth };
   }
+
+  function statusFor(balance, target){
+    if(balance >= target) return { cls: 'ok', label: 'aman' };
+    if(balance >= 0) return { cls: 'warn', label: 'pakai cadangan' };
+    return { cls: 'bad', label: 'defisit' };
+  }
+
+  /* ---------------- result summary ---------------- */
+  function renderKResult(sim){
+    const { history, readyIndex, stageSchedule, target } = sim;
+    const el = document.getElementById('k-result');
+    const readyRow = history[readyIndex];
+    const lahirStage = stageSchedule.find(s => s.name === 'Persalinan');
+    const lastStage = stageSchedule[stageSchedule.length - 1];
+    const lastRow = history[lastStage.endM];
+
+    const tail = history.slice(readyIndex);
+    let minRow = tail[0];
+    tail.forEach(h => { if(h.cumulative < minRow.cumulative) minRow = h; });
+
+    let caution = `Sepanjang perjalanan ini, saldo diproyeksikan tidak pernah turun di bawah dana darurat ${rp(target)} — titik terendahnya ${rp(minRow.cumulative)} sekitar ${fmtDate(minRow)}.`;
+    let cautionClass = '';
+    if(minRow.cumulative < target){
+      const st = statusFor(minRow.cumulative, target);
+      caution = `Catatan: sekitar ${fmtDate(minRow)}, saldo proyeksi turun ke titik terendahnya ${rp(minRow.cumulative)} (${st.label}) — ${st.cls === 'bad' ? 'perlu penyesuaian anggaran atau menunda salah satu tahap' : 'sedikit menggerus dana darurat sebelum naik lagi'}.`;
+      cautionClass = 'caution';
+    }
+
+    el.innerHTML = `
+      <div class="k-result-label">Ringkasan linimasa</div>
+      <div class="k-result-value">Dana darurat penuh ${fmtDate(readyRow)} — boleh mulai program hamil</div>
+      <dl class="k-milestones">
+        <div class="k-milestone"><dt>MULAI COBA HAMIL</dt><dd>${fmtDate(stageSchedule[0].startDate)}</dd></div>
+        <div class="k-milestone"><dt>ANAK LAHIR</dt><dd>${fmtDate(lahirStage.startDate)}</dd></div>
+        <div class="k-milestone"><dt>MULAI SD</dt><dd>${fmtDate(stageSchedule.find(s=>s.name==='SD').startDate)}</dd></div>
+        <div class="k-milestone"><dt>MULAI KULIAH</dt><dd>${fmtDate(stageSchedule.find(s=>s.name==='Kuliah').startDate)}</dd></div>
+        <div class="k-milestone"><dt>PERKIRAAN WISUDA</dt><dd>${fmtDate(lastStage.endDate)}</dd></div>
+        <div class="k-milestone"><dt>SALDO PROYEKSI SAAT WISUDA</dt><dd>${rp(lastRow.cumulative)}</dd></div>
+      </dl>
+      <p class="k-result-note ${cautionClass}">${caution}</p>
+    `;
+  }
+
+  /* ---------------- chart (linear scale, handles dips & negatives) ---------------- */
+  let chartState = null;
+
+  function niceStep(range){
+    const raw = range / 6;
+    const exp = Math.floor(Math.log10(Math.max(raw, 0.0001)));
+    const base = Math.pow(10, exp);
+    const mult = raw / base;
+    const m = mult <= 1 ? 1 : mult <= 2 ? 2 : mult <= 5 ? 5 : 10;
+    return m * base;
+  }
+
+  function renderRoadmapChart(sim){
+    const svg = document.getElementById('k-chart');
+    const { history, readyIndex, stageSchedule, target } = sim;
+    const W = 900, H = 340, padL = 62, padR = 16, padT = 18, padB = 58;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const n = history.length;
+
+    const vals = history.map(h => h.cumulative);
+    let vMax = Math.max(target, ...vals);
+    let vMin = Math.min(0, ...vals);
+    const span = Math.max(vMax - vMin, 1);
+    vMax += span * 0.10;
+    vMin -= span * 0.06;
+
+    const x = i => padL + (n > 1 ? (i / (n - 1)) * plotW : 0);
+    const y = v => padT + plotH - ((v - vMin) / (vMax - vMin)) * plotH;
+
+    let linePath = '';
+    history.forEach((h, i) => { linePath += (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(h.cumulative).toFixed(1) + ' '; });
+    const baseY = y(Math.max(vMin, 0)).toFixed(1);
+    const areaPath = linePath + `L ${x(n-1).toFixed(1)} ${baseY} L ${x(0).toFixed(1)} ${baseY} Z`;
+
+    // gridlines
+    const step = niceStep(vMax - vMin);
+    let gridLines = '';
+    for(let v = Math.ceil(vMin / step) * step; v <= vMax; v += step){
+      const yy = y(v).toFixed(1);
+      gridLines += `<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="var(--paper-line)" stroke-width="1"/>`;
+      gridLines += `<text x="${padL-8}" y="${Number(yy)+3}" font-size="10" fill="var(--ink-soft)" font-family="var(--mono)" text-anchor="end">${fmt(v)}</text>`;
+    }
+    if(vMin < 0){
+      const zy = y(0).toFixed(1);
+      gridLines += `<line x1="${padL}" y1="${zy}" x2="${W-padR}" y2="${zy}" stroke="var(--stamp)" stroke-width="1.2" opacity="0.5"/>`;
+    }
+
+    // year ticks
+    let yearMarks = '';
+    const totalYears = Math.ceil(n/12);
+    const yrStep = totalYears > 30 ? 4 : 3;
+    for(let yr = 0; yr <= totalYears; yr += yrStep){
+      const m = Math.min(yr*12, n-1);
+      yearMarks += `<text x="${x(m).toFixed(1)}" y="${padT+plotH+16}" font-size="10" fill="var(--ink-soft)" font-family="var(--mono)" text-anchor="middle">${history[m].year}</text>`;
+    }
+
+    const targetY = y(target).toFixed(1);
+
+    const markerDefs = [
+      { m: readyIndex, color: 'var(--group-preg)', label: 'Coba Hamil' },
+      { m: stageSchedule.find(s=>s.group==='dini').startM, color: 'var(--group-dini)', label: 'Usia Dini' },
+      { m: stageSchedule.find(s=>s.group==='sekolah').startM, color: 'var(--group-sekolah)', label: 'Sekolah' },
+      { m: stageSchedule.find(s=>s.group==='kuliah').startM, color: 'var(--group-kuliah)', label: 'Kuliah' },
+      { m: stageSchedule[stageSchedule.length-1].endM, color: 'var(--gold)', label: 'Wisuda' },
+    ];
+    let markers = '';
+    markerDefs.forEach((mk, i) => {
+      const mm = Math.min(mk.m, n-1);
+      const mx = x(mm).toFixed(1);
+      const my = y(history[mm].cumulative).toFixed(1);
+      const labelY = padT + plotH + (i % 2 === 0 ? 32 : 44);
+      markers += `
+        <line x1="${mx}" y1="${padT}" x2="${mx}" y2="${padT+plotH}" stroke="${mk.color}" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>
+        <circle cx="${mx}" cy="${my}" r="4.5" fill="${mk.color}" stroke="#FFFEFB" stroke-width="1.5"/>
+        <text x="${mx}" y="${labelY}" font-size="10" fill="${mk.color}" font-family="var(--mono)" text-anchor="middle">${mk.label}</text>
+      `;
+    });
+
+    svg.innerHTML = `
+      ${gridLines}
+      <line x1="${padL}" y1="${targetY}" x2="${W-padR}" y2="${targetY}" stroke="var(--group-kesiapan)" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="${W-padR}" y="${Number(targetY)-6}" font-size="11" fill="var(--group-kesiapan)" font-family="var(--mono)" text-anchor="end">Target ${rp(target)}</text>
+      <path d="${areaPath}" fill="var(--navy)" opacity="0.06"/>
+      <path d="${linePath}" fill="none" stroke="var(--navy)" stroke-width="2.5"/>
+      ${markers}
+      ${yearMarks}
+      <g id="k-hover"></g>
+    `;
+
+    chartState = { history, x, y, n, padL, padT, plotW, plotH, W, target };
+
+    document.getElementById('k-legend').innerHTML =
+      markerDefs.map(mk => `<span class="k-legend-item"><span class="group-dot" style="background:${mk.color}"></span>${mk.label}</span>`).join('')
+      + `<span class="k-legend-item"><span class="group-dot" style="background:var(--group-kesiapan)"></span>Target dana darurat</span>`;
+  }
+
+  /* ---------------- hover readout ---------------- */
+  const wrapEl = document.getElementById('k-chart-wrap');
+  const svgEl = document.getElementById('k-chart');
+  const tipEl = document.getElementById('k-tip');
+
+  function showTip(clientX){
+    if(!chartState) return;
+    const { history, x, y, n, padL, plotW, target } = chartState;
+    const svgRect = svgEl.getBoundingClientRect();
+    const wrapRect = wrapEl.getBoundingClientRect();
+    if(svgRect.width === 0) return;
+    const scale = svgRect.width / 900;
+    const svgX = (clientX - svgRect.left) / scale;
+    let i = Math.round(((svgX - padL) / plotW) * (n - 1));
+    i = Math.max(0, Math.min(n - 1, i));
+
+    const h = history[i];
+    const px = (svgRect.left - wrapRect.left) + x(i) * scale;
+    const py = (svgRect.top - wrapRect.top) + y(h.cumulative) * scale;
+
+    const hover = document.getElementById('k-hover');
+    if(hover){
+      hover.innerHTML = `
+        <line x1="${x(i).toFixed(1)}" y1="${chartState.padT}" x2="${x(i).toFixed(1)}" y2="${(chartState.padT + chartState.plotH).toFixed(1)}" stroke="var(--navy)" stroke-width="1" opacity="0.35"/>
+        <circle cx="${x(i).toFixed(1)}" cy="${y(h.cumulative).toFixed(1)}" r="5.5" fill="var(--gold)" stroke="var(--navy)" stroke-width="2"/>
+      `;
+    }
+
+    const st = statusFor(h.cumulative, target);
+    tipEl.innerHTML = `
+      <div class="k-tip-date">${fmtDate(h)}</div>
+      <span class="k-tip-bal ${h.cumulative < 0 ? 'bad' : ''}">${rp(h.cumulative)}</span>
+      <div class="k-tip-row"><span>Gaji</span><span>+${rp(h.salary)}</span></div>
+      ${h.bonus > 0 ? `<div class="k-tip-row"><span>Bonus</span><span>+${rp(h.bonus)}</span></div>` : ''}
+      <div class="k-tip-row"><span>Pengeluaran</span><span>−${rp(h.salary + h.bonus - h.net - h.rent - h.stageCost)}</span></div>
+      ${h.rent > 0 ? `<div class="k-tip-row"><span>Sewa rumah</span><span>−${rp(h.rent)}</span></div>` : ''}
+      ${h.stageCost > 0 ? `<div class="k-tip-row"><span>Biaya anak</span><span>−${rp(h.stageCost)}</span></div>` : ''}
+      <div class="k-tip-row"><span>Selisih bulan ini</span><span>${h.net >= 0 ? '+' : '−'}${rp(Math.abs(h.net))}</span></div>
+      <div class="k-tip-stage">${h.activeStage ? `Tahap: ${h.activeStage.name} · sudah terpakai ${rp(h.spentOnChild)} dari ${rp(TOTAL_COST)}` : 'Tahap: menabung, belum ada biaya anak'} · status ${st.label}</div>
+    `;
+
+    const half = tipEl.offsetWidth / 2;
+    const left = Math.max(half + 4, Math.min(wrapRect.width - half - 4, px));
+    tipEl.style.left = left + 'px';
+    tipEl.style.top = Math.max(tipEl.offsetHeight + 4, py - 12) + 'px';
+    tipEl.classList.add('show');
+  }
+
+  function hideTip(){
+    tipEl.classList.remove('show');
+    const hover = document.getElementById('k-hover');
+    if(hover) hover.innerHTML = '';
+  }
+
+  wrapEl.addEventListener('pointermove', e => showTip(e.clientX));
+  wrapEl.addEventListener('pointerdown', e => showTip(e.clientX));
+  wrapEl.addEventListener('pointerleave', hideTip);
+  wrapEl.addEventListener('pointercancel', hideTip);
+
+  /* ---------------- table ---------------- */
+  function renderKTable(sim){
+    const { history, stageSchedule, target } = sim;
+    const tbl = document.getElementById('k-table');
+    let rows = `<thead><tr><th>Tahap</th><th>Perkiraan tanggal</th><th>Biaya tahap</th><th>Saldo di akhir tahap</th><th>Status</th></tr></thead><tbody>`;
+    stageSchedule.forEach(st => {
+      const bal = history[st.endM].cumulative;
+      const status = statusFor(bal, target);
+      const dateStr = (st.startDate.year === st.endDate.year && st.startDate.month === st.endDate.month)
+        ? fmtDate(st.startDate)
+        : `${fmtDate(st.startDate)} – ${fmtDate(st.endDate)}`;
+      rows += `<tr>
+        <td>${st.name}</td>
+        <td>${dateStr}</td>
+        <td>${rp(st.cost)}</td>
+        <td>${rp(bal)}</td>
+        <td class="k-status-${status.cls}">${status.label}</td>
+      </tr>`;
+    });
+    rows += '</tbody>';
+    tbl.innerHTML = rows;
+  }
+
+  /* ---------------- ledger ---------------- */
+  function renderLedger(sim){
+    const { history, stageSchedule, target } = sim;
+    const ledgerEl = document.getElementById('ledger');
+    ledgerEl.innerHTML = '';
+    let cum = 0;
+
+    stages.forEach((s, i) => {
+      if(s.groupLabel){
+        const banner = document.createElement('div');
+        banner.className = 'group-banner';
+        banner.id = groupIds[s.group];
+        banner.innerHTML = `<span class="group-dot" style="background:var(--group-${s.group})"></span><h2>${s.groupLabel}</h2>`;
+        ledgerEl.appendChild(banner);
+      }
+
+      cum += s.cost;
+      const sch = stageSchedule[i];
+      const bal = history[sch.endM].cumulative;
+      const status = statusFor(bal, target);
+      const dateStr = (sch.startDate.year === sch.endDate.year && sch.startDate.month === sch.endDate.month)
+        ? `perkiraan ${fmtDate(sch.startDate)}`
+        : `perkiraan ${fmtDate(sch.startDate)} – ${fmtDate(sch.endDate)}`;
+
+      const row = document.createElement('div');
+      row.className = 'ledger-row';
+      row.dataset.group = s.group;
+
+      const itemsHtml = s.items.map(it => {
+        const opsional = /opsional|belum termasuk/i.test(it);
+        return `<li${opsional ? ' class="opsional"' : ''}>${it}</li>`;
+      }).join('');
+
+      row.innerHTML = `
+        <div class="row-index">${String(i+1).padStart(2,'0')}</div>
+        <div class="row-main">
+          <h3>${s.name}</h3>
+          <p class="row-timing">${s.timing} · ${dateStr}</p>
+          <details class="row-detail">
+            <summary>Rincian</summary>
+            <ul>${itemsHtml}</ul>
+          </details>
+        </div>
+        <div class="row-amount">${rp(s.cost)}</div>
+        <div class="row-cumulative">${rp(cum)}<small>biaya kumulatif</small><small class="row-projected ${status.cls}">Proyeksi saldo: ${rp(bal)} (${status.label})</small></div>
+      `;
+      ledgerEl.appendChild(row);
+    });
+
+    const lastSch = stageSchedule[stageSchedule.length - 1];
+    const lastBal = history[lastSch.endM].cumulative;
+    const lastStatus = statusFor(lastBal, target);
+
+    const total = document.createElement('div');
+    total.className = 'total-row';
+    total.id = 'total';
+    total.innerHTML = `
+      <div></div>
+      <h3>Total biaya membesarkan anak</h3>
+      <div class="row-amount">${rp(cum)}</div>
+      <div class="row-cumulative">${rp(cum)}<small>sebelum hamil s.d. lulus kuliah</small><small class="row-projected">Proyeksi saldo nyata saat wisuda: ${rp(lastBal)} (${lastStatus.label})</small></div>
+    `;
+    ledgerEl.appendChild(total);
+  }
+
+  /* ---------------- tab highlighting ---------------- */
+  let tabObserver = null;
+  function setupTabObserver(){
+    if(tabObserver) tabObserver.disconnect();
+    const tabLinks = [...document.querySelectorAll('#tabs a')];
+    const targets = tabLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    if('IntersectionObserver' in window){
+      tabObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const idx = targets.indexOf(entry.target);
+          if(idx === -1) return;
+          if(entry.isIntersecting){
+            tabLinks.forEach(a => a.classList.remove('active'));
+            tabLinks[idx].classList.add('active');
+          }
+        });
+      }, { rootMargin: '-30% 0px -60% 0px' });
+      targets.forEach(t => tabObserver.observe(t));
+    }
+  }
+
+  function updateAll(){
+    const sim = simulateRoadmap(getKInputs());
+    renderKResult(sim);
+    renderRoadmapChart(sim);
+    renderKTable(sim);
+    renderLedger(sim);
+    setupTabObserver();
+    hideTip();
+  }
+
+  kFieldIds.forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', updateAll);
+    el.addEventListener('change', updateAll);
+  });
+  window.addEventListener('resize', hideTip);
+  updateAll();
 </script>
 
 </body>
