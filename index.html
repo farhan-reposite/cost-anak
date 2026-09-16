@@ -594,7 +594,7 @@
   <a href="#total">Total</a>
 </nav>
 
-<header class="cover">
+<header class="cover" style="display: none;">
   <div class="cover-inner">
     <p class="cover-kicker">Buku Tabungan Anak · Simulasi</p>
     <h1>Berapa yang perlu ditabung, dari sebelum hamil sampai wisuda.</h1>
@@ -619,10 +619,9 @@
   <div class="ledger-inner">
     <div class="group-banner" style="margin-top:0;">
       <span class="group-dot" style="background:var(--group-kesiapan)"></span>
-      <h2>Kesiapan Finansial &amp; Linimasa</h2>
+      <h2>Simulation Calculator</h2>
     </div>
-    <p class="intro">Ini bukan cuma soal kapan dana darurat penuh — ini seluruh perjalanannya: dari sekarang, ke masa coba hamil, kelahiran, sampai anak lulus kuliah, dengan gaji, kenaikan tahunan, bonus, <strong>sewa rumah yang dibayar sekaligus tiap tahun</strong>, dan <strong>seluruh biaya anak Rp300 juta</strong> ikut dipotong dari saldo. Ubah angkanya kapan saja — hasil, grafik, tabel, sampai baris-baris buku tabungan di bawah ikut menyesuaikan.</p>
-
+   
     <div class="kesiapan-grid">
       <label class="kfield">
         <span>GAJI BULANAN SAAT INI</span>
@@ -683,8 +682,7 @@
       <svg id="k-chart" viewBox="0 0 900 340" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Grafik saldo proyeksi dari sekarang sampai anak lulus kuliah"></svg>
       <div class="k-tip" id="k-tip" aria-hidden="true"></div>
     </div>
-    <p class="k-hint">Arahkan kursor (atau geser jari) di atas grafik untuk melihat saldo, gaji, bonus, sewa, dan biaya anak di bulan tersebut.</p>
-    <div class="k-legend" id="k-legend"></div>
+     <div class="k-legend" id="k-legend"></div>
 
     <details class="row-detail k-monthly-detail">
       <summary>Jadwal tiap tahap</summary>
@@ -693,33 +691,20 @@
       </div>
     </details>
 
-    <p class="k-assumptions">Asumsi: pengeluaran bulanan dan sewa dianggap tetap (tidak naik tiap tahun); kenaikan gaji 10%/tahun disederhanakan berlaku terus-menerus meski di dunia nyata biasanya melandai — jadi proyeksi di tahap SMA/Kuliah adalah yang paling tidak pasti. Sewa rumah dipotong <strong>sekaligus satu kali setahun</strong> pada bulan yang kalian pilih, jadi grafiknya akan terlihat menurun tajam tiap tahun di bulan itu. Biaya tiap tahap anak memakai angka pasti (total Rp300 juta) dan disebar rata per bulan selama tahap itu berlangsung, lalu dipotong dari saldo berjalan.</p>
-  </div>
+   </div>
 </section>
 
 <main class="ledger-page">
   <div class="ledger-inner">
-    <p class="intro">Setiap baris di bawah adalah satu tahap dalam perjalanan itu, lengkap dengan perkiraan tanggalnya berdasarkan simulasi di atas. Kolom <strong>biaya tahap ini</strong> adalah biaya di tahap tersebut saja; <strong>biaya kumulatif</strong> adalah total biaya sejak awal sampai titik itu; dan <strong>proyeksi saldo</strong> adalah perkiraan saldo nyata kalian di akhir tahap itu, setelah gaji, bonus, sewa, dan biaya anak diperhitungkan bersamaan.</p>
-
+ 
     <div id="ledger"></div>
-
-    <aside class="note-aside">
-      <strong>Catatan di pinggir halaman</strong>
-      Angka Rp300 juta di atas belum termasuk pos opsional: les/bimbel intensif, daycare penuh waktu, atau kos kuliah di luar kota. Semua itu bisa menambah kira-kira Rp50–150 juta lagi, tergantung pilihan keluarga.
-    </aside>
+ 
   </div>
 </main>
 
 <footer class="back-cover">
   <div class="back-inner">
-    <h2>Sebelum menutup buku ini</h2>
-    <ul>
-      <li>Ini estimasi kasar dari riset umum dan simulasi sederhana, bukan nasihat keuangan formal — bukan pengganti konsultasi dengan perencana keuangan.</li>
-      <li>Angka Rp300 juta adalah satu skenario terpilih di tengah-tengah: sekolah swasta reguler untuk TK/SD, negeri untuk SMP/SMA, dan PTN sambil tinggal di rumah. Pilihan yang berbeda bisa menggeser totalnya jauh.</li>
-      <li>BPJS Kesehatan yang aktif memangkas biaya kehamilan dan persalinan secara signifikan — pastikan iurannya selalu lancar.</li>
-      <li>Proyeksi kenaikan gaji 10%/tahun selama puluhan tahun jarang bertahan di dunia nyata — anggap linimasa ini arah kasar, bukan kepastian, dan tinjau ulang setiap tahun.</li>
-      <li>Survei langsung ke sekolah, kampus, dan faskes yang diincar akan memberi angka yang jauh lebih presisi sebelum menetapkan target tabungan.</li>
-    </ul>
+    
   </div>
 </footer>
 
